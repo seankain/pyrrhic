@@ -86,6 +86,7 @@
     <Compile Include="Assets\ThirdParty\ExplosiveLLC\SuperCharacterController\SuperCharacterController\Core\SuperStateMachine.cs" />
     <Compile Include="Assets\Scripts\NPC\Selectable.cs" />
     <Compile Include="Assets\Scripts\Player\Weapons\FPPistol.cs" />
+    <Compile Include="Assets\Scripts\NPC\NpcBaseDebug.cs" />
     <Compile Include="Assets\Scripts\Player\PyrWeaponHandling.cs" />
     <Compile Include="Assets\ThirdParty\ExplosiveLLC\SuperCharacterController\SuperCharacterController\Core\SuperMath.cs" />
     <Compile Include="Assets\Scripts\Player\ExtendedFlycam.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\UI\SelectSquare.cs" />
     <Compile Include="Assets\ThirdParty\ExplosiveLLC\SuperCharacterController\Code\PlayerMachineDebug.cs" />
+    <Compile Include="Assets\Scripts\Player\OfflineFlycam.cs" />
     <Compile Include="Assets\Scripts\UI\ActiveServerList.cs" />
     <Compile Include="Assets\ThirdParty\_Barking_Dog\Common Scripts\MouseLook.cs" />
     <Compile Include="Assets\ThirdParty\Easy FPS\Scripts\DestroyAfterTimeParticle.cs" />
@@ -116,8 +118,9 @@
     <Compile Include="Assets\ThirdParty\Easy FPS\Scripts\MouseLookScript.cs" />
     <Compile Include="Assets\Scripts\PyrServerInfo.cs" />
     <Compile Include="Assets\ThirdParty\Easy FPS\Scripts\PlayerMovementScript.cs" />
-    <Compile Include="Assets\Scripts\NPC\NpcBaseDebug.cs" />
-    <Compile Include="Assets\Scripts\Player\OfflineFlycam.cs" />
+    <Compile Include="Assets\Scripts\NPC\Deployer.cs" />
+    <Compile Include="Assets\Scripts\NPC\UnitBase.cs" />
+    <Compile Include="Assets\Scripts\UI\RTSHud.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />
