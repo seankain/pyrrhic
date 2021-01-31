@@ -1,0 +1,25 @@
+.vs/
+debug.log
+Library/
+Logs/
+obj/
+Temp/
+UserSettings/
+Assets/ExampleAssets
+Assets/Materials
+Assets/Mirror
+Assets/Models
+Assets/ParrelSync
+Assets/Prefabs
+Assets/Presets
+Assets/Scenes
+Assets/Settings
+Assets/TextMesh Pro
+Assets/Textures
+Assets/ThirdParty
+Assets/TutorialInfo
+Mirror.*.csproj
+Mirror.csproj
+SimpleWebTransport.csproj
+Telepathy.csproj
+kcp2k.csproj

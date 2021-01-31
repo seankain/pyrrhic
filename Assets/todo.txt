@@ -1,0 +1,12 @@
+-fps player death/respawn
+-fps player aiming: add rotation to sighting location to give better iron sight position
+-game lifecycle/ timer
+-rts base build
+-rts base select
+-rts base unit spawn orders
+-rts base unit spawn
+-rts drop ships
+-rts player select/highlight
+-rts HUD icons/hotkeys
+-rts command state change
+-rts selected player command
