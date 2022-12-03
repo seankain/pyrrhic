@@ -19,20 +19,24 @@ public class RTSDebug : MonoBehaviour
     private float m_MaxDistance = 50;
     private Vector3 currentSelectMin;
     private Vector3 currentSelectMax;
+    private bool selectEnabled = false;
+    private bool flyEnabled = true;
     private OfflineFlycam flyCam;
+    private List<Selectable> currentSelected = new List<Selectable>();
     public GameObject debugCube;
+    private UnitCommands CurrentUnitCommand = UnitCommands.Move;
 
     // Start is called before the first frame update
     void Start()
     {
-        SelectButton.onClick.AddListener(() => { EnableSelect(true); EnableFly(false); });
+        SelectButton.onClick.AddListener(() => { selectEnabled = !selectEnabled; flyEnabled = !flyEnabled; EnableSelect(!selectEnabled); EnableFly(!flyEnabled); });
         SelectDrawer.OnSquareDrawn += HandleSelectDrawn;
         flyCam = GetComponent<OfflineFlycam>();
         EnableFly(true);
     }
 
-    private void EnableSelect(bool enable=true) {
 
+    private void EnableSelect(bool enable=true) {
         SelectDrawer.gameObject.SetActive(enable); SelectDrawer.enabled = enable;
     }
     private void EnableFly(bool enable=true) 
@@ -44,49 +48,35 @@ public class RTSDebug : MonoBehaviour
     {
         currentSelectMin = min;
         currentSelectMax = max;
-        //var screenStart = playerCamera.WorldToScreenPoint(selectStart);
-        //var screenEnd = playerCamera.WorldToScreenPoint(selectEnd);
-        //TODO boxcast from camera
         var allSelectable = FindObjectsOfType<Selectable>();
-        var selected = new List<Selectable>();
-        foreach (var toDeselect in allSelectable) {
-            var entScreenPos = playerCamera.WorldToScreenPoint(toDeselect.transform.position);
+        currentSelected = new List<Selectable>();
+        foreach (var result in allSelectable) {
+            var entScreenPos = playerCamera.WorldToScreenPoint(result.transform.position);
             Debug.Log(entScreenPos);
             if(entScreenPos.x > min.x && entScreenPos.x < max.x && entScreenPos.y > min.y && entScreenPos.y < max.y)
             {
-                toDeselect.SetSelected(true);
+                result.SetSelected(true);
+                currentSelected.Add(result);
             }
             else
             {
-                toDeselect.SetSelected(false);
+                result.SetSelected(false);
             }
         }
+    }
 
-        //var collisions = Physics.OverlapBox((selectStart+selectEnd)/2,new Vector3(1,1,m_MaxDistance),
-        //    Quaternion.LookRotation(playerCamera.transform.forward), LayerMask.GetMask(new string[] { "Default", "Selection" }));
-        ////----DEBUG CUBE
-        //Vector3[] corners = new Vector3[4];
-        //playerCamera.CalculateFrustumCorners(Rect.zero,1, Camera.MonoOrStereoscopicEye.Mono, corners);
-       
-        //debugCube.transform.position = (selectStart + selectEnd) / 2;
-        //debugCube.transform.rotation = Quaternion.LookRotation(playerCamera.transform.forward);
-        //var dist = Vector3.Distance(currentSelectStart, currentSelectEnd);
-        //debugCube.transform.localScale = new Vector3(
-        //    Mathf.Abs(selectStart.x-selectEnd.x),
-        //    Mathf.Abs(selectStart.y-selectEnd.y),
-        //    m_MaxDistance);
-
-        ////----END DEBUG CUBE
-
-        //foreach (var c in collisions)
-        //{
-        //    Debug.Log($"Hit {c.name}");
-        //    var s = c.gameObject.GetComponent<Selectable>();
-        //    if(s != null)
-        //    {
-        //        s.SetSelected(true);
-        //    }
-        //}
+    private void IssueCommand(UnitCommands command,Vector3 location, GameObject commandObject) 
+    { 
+        if(command == UnitCommands.Move)
+        {
+            foreach(var selected in currentSelected)
+            {
+                //TODO handle air moble capability
+                var cap = selected.GetComponent<GroundMobileCapability>();
+                
+                cap.NavigateTo(location);
+            }
+        }
     }
 
     //Draw the BoxCast as a gizmo to show where it currently is testing. Click the Gizmos button to see this
@@ -113,6 +103,28 @@ public class RTSDebug : MonoBehaviour
         }
     }
 
+    private bool TryGetClickLocation(out Vector3 location,out GameObject hitObject)
+    {
+        RaycastHit hit;
+        // Does the ray intersect any objects excluding the player layer
+        if (Physics.Raycast(playerCamera.transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
+        {
+            Debug.DrawRay(playerCamera.transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.Log("Did Hit");
+            location = hit.point;
+            hitObject = hit.transform.gameObject;
+            return true;
+        }
+        //else
+        //{
+        //    Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+        //    Debug.Log("Did not Hit");
+        //}
+        location = Vector3.zero;
+        hitObject = null;
+        return false;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -120,13 +132,30 @@ public class RTSDebug : MonoBehaviour
         {
             EnableSelect(false);
             EnableFly(true);
-
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             EnableFly(false);
             EnableSelect(true);
         }
+        if(Input.GetAxis("Fire1") > 0)
+        {
+            Debug.Log("FireFire");
+            if (TryGetClickLocation(out var hitPoint,out var hitObject))
+            {
+                IssueCommand(CurrentUnitCommand, hitPoint,hitObject);
+            }
+            
+        }
         
     }
+}
+
+public enum UnitCommands 
+{ 
+    Move,
+    Attack,
+    Board,
+    Deboard,
+    Deploy
 }

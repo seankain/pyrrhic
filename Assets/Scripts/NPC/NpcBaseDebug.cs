@@ -12,16 +12,11 @@ public class NpcBaseDebug : MonoBehaviour
     [SerializeField]
     private GameObject deathGibPrefab;
     [SerializeField]
-    private AudioSource attackSound;
-    [SerializeField]
     private AudioSource deathSound;
     private Animator anim;
-    private bool attacking = false;
     private List<PyrrhicPlayer> players;
     private float playerRefreshSeconds = 10f;
     private float elapsedSeconds = 0f;
-    private float attackCooldownElapsed = 0f;
-    private float attackCooldownSeconds = 1.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -56,7 +51,7 @@ public class NpcBaseDebug : MonoBehaviour
         players = FindObjectsOfType<PyrrhicPlayer>().ToList();
     }
 
-    private List<PyrrhicPlayer> GetPlayersInRange()
+    public List<PyrrhicPlayer> GetPlayersInRange()
     {
         List<PyrrhicPlayer> playersInRange = new List<PyrrhicPlayer>();
         foreach (var player in players)
@@ -78,31 +73,5 @@ public class NpcBaseDebug : MonoBehaviour
             FindPlayers();
             elapsedSeconds = 0;
         }
-        var playersInRange = GetPlayersInRange();
-        if (playersInRange.Count > 0 && attacking == false)
-        {
-            Attack();
-        }
-        if (attacking)
-        {
-            attackCooldownElapsed += Time.deltaTime;
-            if (attackCooldownElapsed >= attackCooldownSeconds) 
-            {
-                attacking = false;
-            }
-        }
     }
-
-    void Attack()
-    {
-        attacking = true;
-        anim.Play("Kick");
-        if (attackSound != null && attackSound.isPlaying == false)
-        {
-            attackSound.Play();
-        }
-    }
-
-
-
 }

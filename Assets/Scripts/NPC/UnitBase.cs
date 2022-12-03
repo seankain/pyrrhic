@@ -5,21 +5,21 @@ using UnityEngine;
 public class UnitBase : MonoBehaviour
 {
     public string UnitName = "Unit";
-    [SerializeField]
-    private bool Destructable = true;
-    [SerializeField]
-    private float HitPoints = 100f;
-    [SerializeField]
-    private bool CanAttack = true;
-    [SerializeField]
-    private bool IsTransport = false;
-    [SerializeField]
-    private bool IsStationary = false;
+    public UnitCapability[] Capabilities;
+    public bool Destructable = true;
+    public float HitPoints = 100f;
+    public bool CanAttack = true;   
+    public bool IsTransport = false;
+    public bool IsStationary = false;
+    //TODO: replace with NpcBase networked
+    protected NpcBaseDebug npcBase;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        npcBase = GetComponent<NpcBaseDebug>();
+        Capabilities = GetComponents<UnitCapability>();
     }
 
     // Update is called once per frame
@@ -27,4 +27,6 @@ public class UnitBase : MonoBehaviour
     {
         
     }
+
+
 }
