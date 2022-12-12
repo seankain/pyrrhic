@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
+//using Mirror;
+using Unity.Netcode;
 using System;
 
 public class PyrrhicPlayerMovement : NetworkBehaviour
@@ -117,7 +118,7 @@ public class PyrrhicPlayerMovement : NetworkBehaviour
 
     private void Start()
     {
-        if (!isLocalPlayer) { return; }
+        if (!IsLocalPlayer) { return; }
         m_RigidBody = GetComponent<Rigidbody>();
         m_Capsule = GetComponent<CapsuleCollider>();
         mouseLook.Init(transform, cam.transform);
@@ -127,7 +128,7 @@ public class PyrrhicPlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if (!isLocalPlayer) { return; }
+        if (!IsLocalPlayer) { return; }
         //RotateView();
         anim.SetFloat("Speed", this.m_RigidBody.velocity.sqrMagnitude);
         anim.SetFloat("Direction", Input.GetAxis("Vertical"));
@@ -140,7 +141,7 @@ public class PyrrhicPlayerMovement : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!isLocalPlayer) { return; }
+        if (!IsLocalPlayer) { return; }
         GroundCheck();
         Vector2 input = GetInput();
 

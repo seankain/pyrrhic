@@ -1,9 +1,10 @@
-﻿using Mirror;
+﻿//using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using Unity.Netcode;
 
 public enum LocalGameState { Hosting,Menu,InHostedGame }
 public class PyrServerInfo : NetworkBehaviour

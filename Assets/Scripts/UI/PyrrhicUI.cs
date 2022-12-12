@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public enum PyrrhicTeam { Boot,Strategist,Spectator }
 public class PyrrhicUI : MonoBehaviour
@@ -12,13 +13,14 @@ public class PyrrhicUI : MonoBehaviour
     public Button HostButton;
     public Button JoinButton;
     public ActiveServerList ActiveServerScroll;
-    public PyrricNetworkManager NetMgr;
+    //public PyrricNetworkManager NetMgr;
     public PyrricNetworkDiscovery NetDisc;
     public Camera MainMenuCamera;
     public GameObject TeamSelectPanel;
     public GameObject MainPanel;
     public Button JoinTeamBootButton;
     public Button JoinTeamStratButton;
+    
 
     private Canvas guiCanvas;
 
@@ -32,8 +34,8 @@ public class PyrrhicUI : MonoBehaviour
     {
         HostButton.onClick.AddListener(HandleHost);
         JoinButton.onClick.AddListener(HandleJoin);
-        NetDisc.HostFound += HandleHostFound;
-        NetDisc.BroadcastDiscoveryRequest();
+        //NetDisc.HostFound += HandleHostFound;
+        //NetDisc.BroadcastDiscoveryRequest();
 
     }
 
@@ -70,14 +72,18 @@ public class PyrrhicUI : MonoBehaviour
 
     void HandleJoin() 
     {
-        NetDisc.StopDiscovery();
-        NetMgr.StartClient(ActiveServerScroll.SelectedItem.ServerUri);
+        //This is the Mirror version of the networking, remove when ported to unity netcode
+        //NetDisc.StopDiscovery();
+        //NetMgr.StartClient(ActiveServerScroll.SelectedItem.ServerUri);
+        NetworkManager.Singleton.StartClient();
+
     }
 
     void HandleHost() {
-        NetDisc.StopDiscovery();
-        NetMgr.StartHost();
+        //NetDisc.StopDiscovery();
+        //NetMgr.StartHost();
         Debug.Log("Disabling main ui panel");
+        NetworkManager.Singleton.StartHost();
         MainPanel.SetActive(false);
         MainMenuCamera.gameObject.SetActive(false);
     }

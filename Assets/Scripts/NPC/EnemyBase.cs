@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Mirror;
+using Unity.Netcode;
 
 public class EnemyBase : NetworkBehaviour
 {
     public float MeleeRange = 3f;
+    public float ProjectileRange = 50f;
     public float Health = 150;
     [SerializeField]
     private GameObject characterAvatar;
@@ -16,6 +17,10 @@ public class EnemyBase : NetworkBehaviour
     private AudioSource attackSound;
     [SerializeField]
     private AudioSource deathSound;
+    [SerializeField]
+    private GameObject projectilePrefab;
+    [SerializeField]
+    private Transform firePosition;
     private Animator anim;
     private bool attacking = false;
     private List<PyrrhicPlayer> players;
@@ -47,7 +52,10 @@ public class EnemyBase : NetworkBehaviour
         {
             yield return null;
         }
-        Instantiate(deathGibPrefab, gameObject.transform.position, Quaternion.identity, null);
+        if (deathGibPrefab != null)
+        {
+            Instantiate(deathGibPrefab, gameObject.transform.position, Quaternion.identity, null);
+        }
         Destroy(gameObject);
 
     }
@@ -57,12 +65,25 @@ public class EnemyBase : NetworkBehaviour
         players = FindObjectsOfType<PyrrhicPlayer>().ToList();
     }
 
-    private List<PyrrhicPlayer> GetPlayersInRange()
+    private List<PyrrhicPlayer> GetPlayersInMeleeRange()
     {
         List<PyrrhicPlayer> playersInRange = new List<PyrrhicPlayer>();
         foreach (var player in players)
         {
             if (Vector3.Distance(player.gameObject.transform.position, gameObject.transform.position) <= MeleeRange)
+            {
+                playersInRange.Add(player);
+            }
+        }
+        return playersInRange;
+    }
+
+    private List<PyrrhicPlayer> GetPlayersInProjectileRange()
+    {
+        List<PyrrhicPlayer> playersInRange = new List<PyrrhicPlayer>();
+        foreach (var player in players)
+        {
+            if (Vector3.Distance(player.gameObject.transform.position, gameObject.transform.position) <= ProjectileRange)
             {
                 playersInRange.Add(player);
             }
@@ -79,10 +100,15 @@ public class EnemyBase : NetworkBehaviour
             FindPlayers();
             elapsedSeconds = 0;
         }
-        var playersInRange = GetPlayersInRange();
+        var playersInRange = GetPlayersInMeleeRange();
         if (playersInRange.Count > 0 && attacking == false)
         {
-            Attack();
+            MeleeAttack();
+        }
+        var playersInShootRange = GetPlayersInProjectileRange();
+        if(playersInShootRange.Count > 0 && attacking == false)
+        {
+            RangeAttack(playersInShootRange[0]);
         }
         if (attacking)
         {
@@ -94,7 +120,7 @@ public class EnemyBase : NetworkBehaviour
         }
     }
 
-    void Attack()
+    void MeleeAttack()
     {
         attacking = true;
         anim.Play("Kick");
@@ -104,6 +130,17 @@ public class EnemyBase : NetworkBehaviour
         }
     }
 
-
+    void RangeAttack(PyrrhicPlayer player)
+    {
+        transform.LookAt(player.transform);
+        attacking = true;
+        anim.SetBool("Shooting", true);
+        var projectile = Instantiate(projectilePrefab);
+        projectile.GetComponent<NetworkObject>().Spawn();
+        var pyrProjectile = projectile.GetComponent<PyrProjectile>();
+        pyrProjectile.Damage = 20;
+        pyrProjectile.Direction = firePosition.forward;
+        pyrProjectile.Send();
+    }
 
 }

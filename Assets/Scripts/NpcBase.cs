@@ -1,12 +1,12 @@
-﻿using Mirror;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class NpcBase : NetworkBehaviour
 {
-    [SyncVar]
-    public float Health = 100;
+
+    public NetworkVariable<float> Health = new NetworkVariable<float>(100);
 
     // Start is called before the first frame update
     void Start()
@@ -21,19 +21,19 @@ public class NpcBase : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void HandleDamage() { }
+    private void HandleDamageClientRpc() { }
 
     [ClientRpc]
-    private void Die()
+    private void DieClientRpc()
     {
         Debug.Log($"{gameObject.name} Died");
         Destroy(this);
     }
 
-    [Command]
-    public void ProcessHit()
+    [ServerRpc]
+    public void ProcessHitServerRpc()
     {
-        Die();
+        DieClientRpc();
     }
 
 }
