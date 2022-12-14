@@ -135,12 +135,13 @@ public class EnemyBase : NetworkBehaviour
         transform.LookAt(player.transform);
         attacking = true;
         anim.SetBool("Shooting", true);
-        var projectile = Instantiate(projectilePrefab);
+        var projectile = Instantiate(projectilePrefab,firePosition.transform.position,Quaternion.identity,null);
         projectile.GetComponent<NetworkObject>().Spawn();
         var pyrProjectile = projectile.GetComponent<PyrProjectile>();
         pyrProjectile.Damage = 20;
         pyrProjectile.Direction = firePosition.forward;
         pyrProjectile.Send();
+        attackSound.Play();
     }
 
 }

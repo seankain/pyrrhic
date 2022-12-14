@@ -25,6 +25,7 @@ public class CpuTeamPlayer : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!NetworkManager.Singleton.IsListening) { return; }
         elapsed += Time.deltaTime;
         if(elapsed >= SpawnFrequency && teammates.Count < MaximumTeammates)
         {

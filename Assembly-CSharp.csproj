@@ -8,7 +8,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{09713784-38F9-AB47-1ECF-BDC418183CCA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -57,6 +58,7 @@
     <Analyzer Include="D:\UnityProjects\pyrrhic\Assets\ThirdParty\StarterAssets\Editor\PackageChecker\StarterAssetsPackageChecker.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\NPC\Damageable.cs" />
     <Compile Include="Assets\Scripts\NPC\GroundMobileCapability.cs" />
     <Compile Include="Assets\ThirdParty\LineDraw\Scripts\LineFactory.cs" />
     <Compile Include="Assets\Scripts\NPC\FightingUnitCapability.cs" />
@@ -151,6 +153,15 @@
     <Compile Include="Assets\ThirdParty\JMO Assets\WarFX\Scripts\CFX_AutoDestructShuriken.cs" />
     <Compile Include="Assets\ThirdParty\JMO Assets\WarFX\Spawn System\CFX_SpawnSystem.cs" />
     <Compile Include="Assets\CpuTeamPlayer.cs" />
+    <Compile Include="Assets\Scripts\NPC\NpcWeapon.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\BaseState.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\IdleState.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\MovingState.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\AttackingState.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\InjuredState.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\DeadState.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\MobileUnitStateMachine.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

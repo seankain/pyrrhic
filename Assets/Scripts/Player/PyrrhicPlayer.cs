@@ -113,7 +113,7 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
 
     public void Die()
     {
-        Debug.Log($"{Name} died");
+        Debug.Log($"{Name.Value} died");
     }
 
     private void EnableSpectateMotion() 
