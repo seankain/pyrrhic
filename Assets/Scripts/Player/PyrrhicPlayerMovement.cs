@@ -130,8 +130,11 @@ public class PyrrhicPlayerMovement : NetworkBehaviour
     {
         if (!IsLocalPlayer) { return; }
         //RotateView();
-        anim.SetFloat("Speed", this.m_RigidBody.velocity.sqrMagnitude);
-        anim.SetFloat("Direction", Input.GetAxis("Vertical"));
+        if (anim.isActiveAndEnabled)
+        {
+            anim.SetFloat("Speed", this.m_RigidBody.velocity.sqrMagnitude);
+            anim.SetFloat("Direction", Input.GetAxis("Vertical"));
+        }
         if (Input.GetButtonDown("Jump") && !m_Jump)
         {
             m_Jump = true;

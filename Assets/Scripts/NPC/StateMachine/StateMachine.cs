@@ -2,30 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateMachine : MonoBehaviour
+public class StateMachine<T> : MonoBehaviour where T: UnitCapability
 {
-    BaseState currentState;
+    BaseState<T> currentState;
 
     void Start()
     {
         currentState = GetInitialState();
         if (currentState != null)
+        {
             currentState.Enter();
+        }
     }
 
     void Update()
     {
         if (currentState != null)
+        {
             currentState.UpdateLogic();
+        }
     }
 
     void LateUpdate()
     {
         if (currentState != null)
+        {
             currentState.UpdatePhysics();
+        }
     }
 
-    public void ChangeState(BaseState newState)
+    public void ChangeState(BaseState<T> newState)
     {
         currentState.Exit();
 
@@ -33,7 +39,7 @@ public class StateMachine : MonoBehaviour
         currentState.Enter();
     }
 
-    protected virtual BaseState GetInitialState()
+    protected virtual BaseState<T> GetInitialState()
     {
         return null;
     }

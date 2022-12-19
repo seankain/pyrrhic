@@ -54,20 +54,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
-    <Analyzer Include="D:\UnityProjects\pyrrhic\Assets\ThirdParty\StarterAssets\Editor\PackageChecker\StarterAssetsPackageChecker.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\Project.cs" />
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\ClonesManagerWindow.cs" />
-    <Compile Include="Assets\ParrelSync\ParrelSync\Editor\AssetModBlock\ParrelSyncAssetModificationProcessor.cs" />
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\ClonesManager.cs" />
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\NonCore\AskFeedbackDialog.cs" />
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\AssetModBlock\EditorQuit.cs" />
-    <Compile Include="Assets\ParrelSync\ParrelSync\Editor\Preferences.cs" />
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\ExternalLinks.cs" />
-    <Compile Include="Assets\ParrelSync\ParrelSync\Editor\NonCore\OtherMenuItem.cs" />
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\UpdateChecker.cs" />
     <Compile Include="Assets\ParrelSync\ParrelSync\Editor\FileUtilities.cs" />
+    <Compile Include="Assets\ParrelSync\ParrelSync\Editor\AssetModBlock\ParrelSyncAssetModificationProcessor.cs" />
+    <Compile Include="Assets\ParrelSync\ParrelSync\Editor\Preferences.cs" />
+    <Compile Include="Assets\ParrelSync\ParrelSync\Editor\NonCore\OtherMenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ParrelSync\ParrelSync\projectCloner.asmdef" />
@@ -337,6 +336,12 @@
     <Reference Include="UnityEditor.LinuxStandalone.Extensions">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.1.23f1\Editor\Data\PlaybackEngines\LinuxStandaloneSupport\UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="StarterAssetsPackageChecker">
+      <HintPath>Assets\ThirdParty\StarterAssets\Editor\PackageChecker\StarterAssetsPackageChecker.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Collections.LowLevel.ILSupport">
+      <HintPath>Library\PackageCache\com.unity.collections@1.2.4\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@1.17.6\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -358,23 +363,17 @@
     <Reference Include="Unity.Burst.Cecil">
       <HintPath>Library\PackageCache\com.unity.burst@1.7.4\Unity.Burst.CodeGen\Unity.Burst.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Burst.Cecil.Rocks">
-      <HintPath>Library\PackageCache\com.unity.burst@1.7.4\Unity.Burst.CodeGen\Unity.Burst.Cecil.Rocks.dll</HintPath>
-    </Reference>
     <Reference Include="log4netPlastic">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@1.17.6\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Burst.Cecil.Rocks">
+      <HintPath>Library\PackageCache\com.unity.burst@1.7.4\Unity.Burst.CodeGen\Unity.Burst.Cecil.Rocks.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Collections.LowLevel.ILSupport">
-      <HintPath>Library\PackageCache\com.unity.collections@1.2.4\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil@1.10.2\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="StarterAssetsPackageChecker">
-      <HintPath>Assets\ThirdParty\StarterAssets\Editor\PackageChecker\StarterAssetsPackageChecker.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>

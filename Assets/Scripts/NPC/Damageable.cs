@@ -12,7 +12,16 @@ public class Damageable : UnitCapability
     
     public float HitPoints = 100f;
 
+    public void Start()
+    {
+        
+    }
     public void Injure() { }
     public void Die() { }
+
+    protected override void OnStarting()
+    {
+    
+    }
 }
 

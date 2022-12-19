@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class DeadState : BaseState<Damageable>
 {
-    public DeadState(Damageable capability) : base("Dead", capability) { }
+    public DeadState(StateMachine<Damageable> stateMachine, Damageable capability) : base("Dead", stateMachine, capability) { }
 }

@@ -12,11 +12,13 @@ public class BaseState<T> where T : UnitCapability
     public string name;
 
     protected T capability;
+    protected StateMachine<T> stateMachine;
 
-    public BaseState(string name, T capability)
+    public BaseState(string name, StateMachine<T> stateMachine, T capability)
     {
         this.name = name;
         this.capability = capability;
+        this.stateMachine = stateMachine;
     }
 
     public virtual void Enter()

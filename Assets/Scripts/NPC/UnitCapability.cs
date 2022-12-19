@@ -2,7 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitCapability : MonoBehaviour
+public abstract class UnitCapability : MonoBehaviour
 {
-    public UnitCommands CapabilityCommand;
+    protected Animator anim;
+    void Start()
+    {
+        anim = GetComponent<Animator>();
+        OnStarting();
+    }
+
+    protected abstract void OnStarting();
 }

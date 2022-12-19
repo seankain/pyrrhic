@@ -24,7 +24,7 @@ public class RTSDebug : MonoBehaviour
     private OfflineFlycam flyCam;
     private List<Selectable> currentSelected = new List<Selectable>();
     public GameObject debugCube;
-    private UnitCommands CurrentUnitCommand = UnitCommands.Move;
+    private UnitCommandType CurrentUnitCommand = UnitCommandType.Move;
 
     // Start is called before the first frame update
     void Start()
@@ -65,9 +65,9 @@ public class RTSDebug : MonoBehaviour
         }
     }
 
-    private void IssueCommand(UnitCommands command,Vector3 location, GameObject commandObject) 
+    private void IssueCommand(UnitCommandType command,Vector3 location, GameObject commandObject) 
     { 
-        if(command == UnitCommands.Move)
+        if(command == UnitCommandType.Move)
         {
             foreach(var selected in currentSelected)
             {
@@ -151,11 +151,13 @@ public class RTSDebug : MonoBehaviour
     }
 }
 
-public enum UnitCommands 
+public enum UnitCommandType 
 { 
     Move,
     Attack,
     Board,
     Deboard,
-    Deploy
+    Deploy,
+    Build,
+    Repair
 }

@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class InjuredState : BaseState<Damageable>
 {
-    public InjuredState(Damageable capability) : base("Injured", capability) { }
+    public InjuredState(StateMachine<Damageable> stateMachine,Damageable capability) : base("Injured",stateMachine, capability) { }
 }
