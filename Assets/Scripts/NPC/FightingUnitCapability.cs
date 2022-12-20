@@ -34,8 +34,8 @@ public class FightingUnitCapability : CommandableCapability
     private bool attacking = false;
     private float attackCooldownElapsed = 0f;
     private float attackCooldownSeconds = 1.0f;
-    private GameObject weapon;
-
+    private NpcWeapon weapon;
+    private FightingUnitStateMachine stateMachine;
     //// Start is called before the first frame update
     //void Start()
     //{
@@ -50,7 +50,7 @@ public class FightingUnitCapability : CommandableCapability
     protected override void OnStarting()
     {
         CapabilityCommand = UnitCommandType.Attack;
-
+        stateMachine = GetComponent<FightingUnitStateMachine>();
         //anim = GetComponent<Animator>();
         //npcBase = GetComponent<NpcBaseDebug>();
     }
@@ -75,7 +75,19 @@ public class FightingUnitCapability : CommandableCapability
 
     public void GiveWeapon(NpcWeaponData data)
     {
-        weapon = Instantiate(data.Model, equipSockets.FrontHoldPosition.position, equipSockets.FrontHoldPosition.rotation, equipSockets.FrontHoldPosition);
+        var weaponObj = Instantiate(data.Model, equipSockets.FrontHoldPosition.position, equipSockets.FrontHoldPosition.rotation, equipSockets.FrontHoldPosition);
+        var audioSource = weaponObj.AddComponent<AudioSource>();
+        audioSource.clip = data.FireSound;
+        weapon = weaponObj.AddComponent<NpcWeapon>();
+        weapon.FireAudio = audioSource;
+        weapon.FirePosition = weaponObj.transform.Find("Muzzle");
+        //var projectilePrefab = new GameObject();
+        var projectilePrefab = data.Ammunition.Model;
+        var projectile = projectilePrefab.GetComponent<PyrProjectile>();
+        projectile.Damage = data.Ammunition.Damage;
+        projectile.MassGrams = data.Ammunition.ProjectileMassGrams;
+        projectile.SpeedMetersPerSecond = data.Ammunition.MuzzleVelocity;
+        weapon.ProjectilePrefab = projectile;
     }
 
     public void Attack(GameObject gameObject)
@@ -83,13 +95,24 @@ public class FightingUnitCapability : CommandableCapability
         transform.LookAt(gameObject.transform);
         attacking = true;
         anim.SetBool("Shooting", true);
-        //var projectile = Instantiate(projectilePrefab, firePosition.transform.position, Quaternion.identity, null);
-        //projectile.GetComponent<NetworkObject>().Spawn();
-        //var pyrProjectile = projectile.GetComponent<PyrProjectile>();
-        //pyrProjectile.Damage = 20;
-        //pyrProjectile.Direction = firePosition.forward;
-        //pyrProjectile.Send();
-        attackSound.Play();
+        weapon.Fire();
+    }
+
+    private void OnAnimatorIK(int layerIndex)
+    {
+        var gripPos = weapon.transform.Find("GripIKHint");
+        var foregripPos = weapon.transform.Find("ForegripIKHint");
+        anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
+        anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
+        anim.SetIKPosition(AvatarIKGoal.RightHand, gripPos.position);
+        anim.SetIKRotation(AvatarIKGoal.RightHand, gripPos.rotation);
+
+        anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1f);
+        anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1f);
+        anim.SetIKPosition(AvatarIKGoal.LeftHand, foregripPos.position);
+        anim.SetIKRotation(AvatarIKGoal.LeftHand, foregripPos.rotation);
+
+
     }
 
 }

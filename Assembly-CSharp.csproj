@@ -170,6 +170,8 @@
     <Compile Include="Assets\Scripts\NPC\Weapons\NpcAmmunitionData.cs" />
     <Compile Include="Assets\Scripts\NPC\Weapons\BallisticArc.cs" />
     <Compile Include="Assets\EquipSockets.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\FightingUnitStateMachine.cs" />
+    <Compile Include="Assets\Scripts\NPC\StateMachine\AttackReadyState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

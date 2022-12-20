@@ -42,6 +42,7 @@ public class UnitBase : NetworkBehaviour
             {
                 fighting.GiveWeapon(weaponData);
             }
+            gameObject.AddComponent<FightingUnitStateMachine>();
         }
         Capabilities = GetComponents<UnitCapability>();
         CommandableCapabilities = GetComponents<CommandableCapability>();
@@ -52,7 +53,7 @@ public class UnitBase : NetworkBehaviour
         //TODO: parse command types and send to the right place
         foreach(var capability in CommandableCapabilities)
         {
-            if(capability.CapabilityCommand == unitCommand.CommandType)
+            if(capability.CapabilityCommand.Equals(unitCommand.CommandType))
             {
                 capability.Commands.Push(unitCommand);
             }

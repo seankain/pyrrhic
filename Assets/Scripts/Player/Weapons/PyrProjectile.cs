@@ -8,10 +8,9 @@ public class PyrProjectile : NetworkBehaviour
     public float Damage = 30f;
     private Rigidbody rb;
     public ulong ownerId;
+    public float SpeedMetersPerSecond = 300;
     [SerializeField]
-    private float SpeedMetersPerSecond = 300;
-    [SerializeField]
-    private float mass = 0.1f;
+    public float MassGrams = 0.1f;
     [SerializeField]
     public Vector3 Direction = Vector3.forward;
     [SerializeField]
@@ -32,8 +31,8 @@ public class PyrProjectile : NetworkBehaviour
 
     public void Send()
     {
-
-        rb.AddForce(Direction * forceMultiplier, ForceMode.Impulse);
+        //rb.AddForce(Direction * (MassGrams * (SpeedMetersPerSecond*SpeedMetersPerSecond)), ForceMode.Impulse);
+        rb.AddForce(Direction * SpeedMetersPerSecond, ForceMode.VelocityChange);
     }
 
     // Update is called once per frame

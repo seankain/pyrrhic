@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class NpcWeapon : NetworkBehaviour
 {
-    [SerializeField]
-    private GameObject ProjectilePrefab;
+    public AudioSource FireAudio;
+    public PyrProjectile ProjectilePrefab;
+    public Transform FirePosition;
+    //[SerializeField]
+    //private GameObject ProjectilePrefab;
     [SerializeField]
     private float FireDelaySeconds = 0.3f;
     [SerializeField]
@@ -35,7 +38,16 @@ public class NpcWeapon : NetworkBehaviour
 
     public void Fire()
     {
-        canFire = false;
+        if (canFire)
+        {
+            FireAudio.Play();
+            var projectile = Instantiate(ProjectilePrefab.gameObject, FirePosition.position, Quaternion.identity, null);
+            projectile.GetComponent<NetworkObject>().Spawn();
+            var pyrProjectile = projectile.GetComponent<PyrProjectile>();
+            pyrProjectile.Direction = FirePosition.forward;
+            pyrProjectile.Send();
+            canFire = false;
+        }
     }
 
 }

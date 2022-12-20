@@ -63,7 +63,8 @@ public class CpuTeamPlayer : NetworkBehaviour
                     if (Vector3.Distance(players[0].transform.position, teammates[i].transform.position) < 20)
                     {
                         Debug.Log($"cpu player issuing attack command to {teammates[i].name} against {players[0].name}");
-                        teammates[i].GetComponent<FightingUnitCapability>().Attack(players[0].gameObject);
+                        //teammates[i].GetComponent<FightingUnitCapability>().Attack(players[0].gameObject);
+                        unitBase.AddCommand(new AttackCommand(players[0].gameObject));
                     }
                     else
                     {

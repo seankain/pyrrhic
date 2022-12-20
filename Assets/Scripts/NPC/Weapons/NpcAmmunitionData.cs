@@ -6,6 +6,7 @@ public class NpcAmmunitionData : ScriptableObject
 {
     public float ProjectileMassGrams;
     public float MuzzleVelocity;
+    public float Damage = 10f;
     //For rpg,rocket etc, 0 for the rest
     public float SelfPropelledVelocity;
     //Usually one

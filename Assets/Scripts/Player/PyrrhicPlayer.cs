@@ -11,6 +11,8 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
     private NetworkVariable<PyrrhicTeam> Team = new NetworkVariable<PyrrhicTeam>(PyrrhicTeam.Spectator, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField]
     private NetworkVariable<float> Health = new NetworkVariable<float>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    public NetworkVariable<bool> IsDead = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private enum PlayerState { Joining, Playing, Spectating }
     private PlayerState PlayerCurrentState = PlayerState.Joining;
     public Camera playerCamera;
@@ -114,6 +116,7 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
     public void Die()
     {
         Debug.Log($"{Name.Value} died");
+        IsDead.Value = true;
     }
 
     private void EnableSpectateMotion() 
