@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 
 public abstract class UnitCommandBase
 {
-    public readonly UnitCommandType CommandType;
+    public abstract UnitCommandType CommandType { get; set; }
 }
 

@@ -98,6 +98,15 @@ public class FightingUnitCapability : CommandableCapability
         weapon.Fire();
     }
 
+    private IEnumerator Attack_Coroutine()
+    {
+        transform.LookAt(gameObject.transform);
+        attacking = true;
+        anim.SetBool("Shooting", true);
+        weapon.Fire();
+        yield return null;
+    }
+
     private void OnAnimatorIK(int layerIndex)
     {
         var gripPos = weapon.transform.Find("GripIKHint");

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AttackingState : BaseState<FightingUnitCapability>
 {
+    private PyrrhicPlayer currentTarget;
     public AttackingState(FightingUnitStateMachine stateMachine, FightingUnitCapability capability) : base("Attacking", stateMachine, capability)
     {
         this.stateMachine = stateMachine;
@@ -24,12 +25,38 @@ public class AttackingState : BaseState<FightingUnitCapability>
             var player = command.Target.GetComponent<PyrrhicPlayer>();
             if (player != null)
             {
-                while (player.IsDead.Value == false)
+                currentTarget = player;
+            }
+        }
+        //var command = (AttackCommand)capability.Commands.Pop();
+        //var player = command.Target.GetComponent<PyrrhicPlayer>();
+
+
+        // while (player.IsDead.Value == false)
+        //  {
+        capability.Attack(currentTarget.gameObject);
+        // }
+        //TODO use weapon range
+        if (Vector3.Distance(currentTarget.transform.position, capability.gameObject.transform.position) > 20f)
+        {
+            currentTarget = null;
+            stateMachine.ChangeState(((FightingUnitStateMachine)stateMachine).Ready);
+        }
+        if (currentTarget.IsDead.Value == true)
+        {
+            var otherPlayers = capability.GetPlayers();
+            foreach (var otherPlayer in otherPlayers)
+            {
+                //TODO: make distance variable
+                if (Vector3.Distance(otherPlayer.transform.position, currentTarget.transform.position) < 10f)
                 {
-                    capability.Attack(command.Target);
+                    currentTarget = otherPlayer;
                 }
             }
-
+            stateMachine.ChangeState(((FightingUnitStateMachine)stateMachine).Ready);
         }
+
+
+
     }
 }

@@ -18,6 +18,7 @@ public class PyrrhicUI : MonoBehaviour
     public Camera MainMenuCamera;
     public GameObject TeamSelectPanel;
     public GameObject MainPanel;
+    public GameObject ScorePanel;
     public Button JoinTeamBootButton;
     public Button JoinTeamStratButton;
     
@@ -51,6 +52,14 @@ public class PyrrhicUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             ActiveServerScroll.AddServer(new DiscoveryResponse { ServerUri = new System.Uri("tcp:\\\\127.0.0.1"), ServerName = "Localhost" });
+        }
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            ScorePanel.SetActive(true);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            ScorePanel.SetActive(false);
         }
     }
 

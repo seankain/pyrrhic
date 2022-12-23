@@ -22,8 +22,6 @@ public class UnitBase : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //npcBase = GetComponent<NpcBaseDebug>();
-        // TODO add capability components at runtime based on unit base properties instead of adding them here
         if (!IsStationary && !IsTransport)
         {
             gameObject.AddComponent<GroundMobileCapability>();
@@ -58,6 +56,25 @@ public class UnitBase : NetworkBehaviour
                 capability.Commands.Push(unitCommand);
             }
         }
+    }
+
+    public bool CanBeSeenByPlayer()
+    {
+        var players = FindObjectsOfType<PyrrhicPlayer>();
+        foreach(var player in players)
+        {
+            var angle = -Vector3.SignedAngle((player.transform.position - transform.position), player.transform.forward, Vector3.up);
+            if(angle > -90 && angle < 90)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public PyrrhicPlayer[] GetPlayers()
+    {
+        return FindObjectsOfType<PyrrhicPlayer>();
     }
 
 

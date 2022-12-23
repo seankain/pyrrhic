@@ -54,6 +54,7 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
         var cams = FindObjectsOfType<Camera>();
         foreach (var cam in cams) { if (cam.name == "MainCamera") { Debug.Log($"Disabling {cam.name}"); cam.enabled = false; } }
         //camera = gameObject.GetComponentInChildren<Camera>(true);
+        ui.TeamSelectPanel.SetActive(true);
     }
 
     // Start is called before the first frame update
@@ -73,7 +74,6 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
     // Update is called once per frame
     void Update()
     {
-
     }
 
     private void SetCursorState(bool onUi)
@@ -181,13 +181,14 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
         //Default is spectator
         //TODO: handle when player selects full team
         Debug.Log("Server side team join request");
+        var gameInfo = FindObjectOfType<PyrrhicGame>();
         if (team == PyrrhicTeam.Boot)
         {
             if (serverInfo.CurrentBootTeamSize < serverInfo.MaxBootTeamSize)
             {
                 team = PyrrhicTeam.Boot;
                 Debug.Log($"{Name} Joined boot");
-
+                gameInfo.AddPlayerToTeamServerRpc(this.OwnerClientId, Name.Value, PyrrhicTeam.Boot);
                 SetTeamClientRpc(this.OwnerClientId, PyrrhicTeam.Boot);
             }
         }
@@ -197,6 +198,7 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
             {
                 Debug.Log($" {Name} Joined Strategist");
                 team = PyrrhicTeam.Strategist;
+                gameInfo.AddPlayerToTeamServerRpc(this.OwnerClientId, Name.Value, PyrrhicTeam.Strategist);
                 SetTeamClientRpc(this.OwnerClientId, PyrrhicTeam.Strategist);
             }
 
