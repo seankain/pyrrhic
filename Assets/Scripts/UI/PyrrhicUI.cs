@@ -53,14 +53,6 @@ public class PyrrhicUI : MonoBehaviour
         {
             ActiveServerScroll.AddServer(new DiscoveryResponse { ServerUri = new System.Uri("tcp:\\\\127.0.0.1"), ServerName = "Localhost" });
         }
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            ScorePanel.SetActive(true);
-        }
-        if (Input.GetKeyUp(KeyCode.Tab))
-        {
-            ScorePanel.SetActive(false);
-        }
     }
 
     public void ShowTeamSelect() {
@@ -77,6 +69,16 @@ public class PyrrhicUI : MonoBehaviour
     public void ShowCanvas() {
         guiCanvas.enabled = true;
         MainPanel.SetActive(true);
+    }
+
+    public void ShowScorePanel(bool show)
+    {
+        if (show)
+        {
+            ScorePanel.GetComponent<ScorePanel>().Refresh();
+        }
+        guiCanvas.enabled = show;
+        ScorePanel.SetActive(show);
     }
 
     void HandleJoin() 

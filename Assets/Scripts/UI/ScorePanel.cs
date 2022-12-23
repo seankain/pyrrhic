@@ -22,10 +22,26 @@ public class ScorePanel : MonoBehaviour
             var x = (TeamInfo)newValue;
             foreach(var y in x.Teammates)
             {
-                sb.Append(y.Name);
+                sb.AppendLine(y.Name);
             }
-
+            BootTeamInfo.text = sb.ToString();
         };
+
+    }
+
+    public void Refresh()
+    {
+        gameInfo = FindObjectOfType<PyrrhicGame>();
+        var bootTeamInfo = gameInfo.BootTeamInfo.Value;
+        StringBuilder sb = new StringBuilder();
+        foreach (var info in bootTeamInfo.Teammates)
+        {
+            sb.AppendLine(info.Name);
+        }
+        BootTeamInfo.text = sb.ToString();
+
+        var stratTeamInfo = gameInfo.StrategistTeamInfo.Value;
+
 
     }
 

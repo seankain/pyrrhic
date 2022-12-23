@@ -38,7 +38,7 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
         Team.OnValueChanged += (prev,next) => { Debug.Log($"{gameObject.name} changed team"); };
         Health.OnValueChanged += (prev, next) => { Debug.Log($"{gameObject.name} took damage down to {next} health"); };
         Name.OnValueChanged += (prev, next) => { Debug.Log($"{gameObject.name} changed player name from {prev} to {next}"); };
-        OnStartLocalPlayer();
+        //OnStartLocalPlayer();
 
     }
 
@@ -74,6 +74,16 @@ public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
     // Update is called once per frame
     void Update()
     {
+        if (!IsLocalPlayer) { return; }
+        
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            ui.ShowScorePanel(true);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            ui.ShowScorePanel(false);
+        }
     }
 
     private void SetCursorState(bool onUi)

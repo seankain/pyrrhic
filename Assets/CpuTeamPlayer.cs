@@ -8,6 +8,7 @@ public class CpuTeamPlayer : NetworkBehaviour
 
     public PyrrhicTeam Team = PyrrhicTeam.Strategist;
     public List<Vector3> SpawnLocations;
+    public string Name = "CPU";
     public int MaximumTeammates = 5;
     public float SpawnFrequency = 10f;
     [SerializeField]
@@ -25,6 +26,12 @@ public class CpuTeamPlayer : NetworkBehaviour
         teammates = new List<GameObject>();
         assignmentsElapsed = new List<float>();
         players = FindObjectsOfType<PyrrhicPlayer>();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
     }
 
     // Update is called once per frame
@@ -75,6 +82,18 @@ public class CpuTeamPlayer : NetworkBehaviour
             }
 
 
+        }
+    }
+
+    [ServerRpc]
+    private void SendTeamJoinRequestServerRpc()
+    {
+        var gameInfo = FindObjectOfType<PyrrhicGame>();
+        if (serverInfo.CurrentStrategistTeamSize < serverInfo.MaxStrategistTeamSize)
+        {
+            Debug.Log($" {Name} Joined Strategist");
+            gameInfo.AddPlayerToTeamServerRpc(this.OwnerClientId, Name, PyrrhicTeam.Strategist);
+            //SetTeamClientRpc(this.OwnerClientId, PyrrhicTeam.Strategist);
         }
     }
 }

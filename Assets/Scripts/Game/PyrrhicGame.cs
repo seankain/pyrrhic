@@ -47,11 +47,26 @@ public class PyrrhicGame : NetworkBehaviour
     public NetworkVariable<TeamInfo> StrategistTeamInfo = new NetworkVariable<TeamInfo>();
     public NetworkVariable<TeamInfo> Spectators = new NetworkVariable<TeamInfo>();
 
+    public GameMode Mode;
+
     void Start()
     {
         NetworkManager.Singleton.OnClientConnectedCallback += Singleton_OnClientConnectedCallback;
         NetworkManager.Singleton.OnClientDisconnectCallback += Singleton_OnClientDisconnectCallback;
-        BootTeamInfo.Value = new TeamInfo { Teammates = new List<TeammateInfo>() };
+
+
+    }
+
+   public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            BootTeamInfo.Value = new TeamInfo { Teammates = new List<TeammateInfo>() };
+            StrategistTeamInfo.Value = new TeamInfo { Teammates = new List<TeammateInfo>() };
+            StrategistTickets.Value = Mode.StrategistTickets;
+            BootTeamLivesRemaining.Value = Mode.BootLives;
+        }
+
     }
 
     [ServerRpc(RequireOwnership = false)]
