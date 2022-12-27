@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// TODO: moveout of npc scripts since this will probably be how all ammunition data is stored
+/// </summary>
 [CreateAssetMenu(menuName = "Pyrrhic/NpcAmmunitionData")]
-
 public class NpcAmmunitionData : ScriptableObject
 {
+    public string Name;
     public float ProjectileMassGrams;
     public float MuzzleVelocity;
+    public float RadiusMillimeters;
+    public float BallisticCoefficientG1;
     public float Damage = 10f;
     //For rpg,rocket etc, 0 for the rest
     public float SelfPropelledVelocity;
@@ -20,5 +25,18 @@ public class NpcAmmunitionData : ScriptableObject
     //Does it have brass, some kind of spent artifact
     public GameObject SpentModel;
 
+    //Generate inputs for trajectory calculations
+    public ProjectileInfo Info
+    {
+        get {
+            return new ProjectileInfo
+            {
+                MassGrams = ProjectileMassGrams,
+                BallisticCoefficientG1 = BallisticCoefficientG1,
+                RadiusMillimeters = RadiusMillimeters,
+                MuzzleVelocity = MuzzleVelocity
+            };
+        }
+    }
 }
 
