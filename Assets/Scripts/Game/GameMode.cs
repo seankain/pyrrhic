@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "Pyrrhic/GameMode")]
 public class GameMode : ScriptableObject
 {
     public int BootLives = 10;

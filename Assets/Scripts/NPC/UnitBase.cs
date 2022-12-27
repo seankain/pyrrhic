@@ -30,7 +30,6 @@ public class UnitBase : NetworkBehaviour
         if (Destructable)
         {
             var damageable = gameObject.AddComponent<Damageable>();
-            damageable.HitPoints = HitPoints;
         }
         if (CanAttack)
         {
@@ -75,6 +74,11 @@ public class UnitBase : NetworkBehaviour
     public PyrrhicPlayer[] GetPlayers()
     {
         return FindObjectsOfType<PyrrhicPlayer>();
+    }
+
+    public void HandleHit(float damage)
+    {
+
     }
 
 

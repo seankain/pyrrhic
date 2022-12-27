@@ -64,6 +64,11 @@ public class PyrProjectile : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log($"Whacked {collision.collider.gameObject.name}");
+        var hittable =collision.collider.gameObject.GetComponent<IHittable>();
+        if(hittable != null)
+        {
+            hittable.HandleHitClientRpc();
+        }
         var player = collision.collider.gameObject.GetComponent<PyrrhicPlayer>();
         if (player != null)
         {
@@ -73,7 +78,7 @@ public class PyrProjectile : NetworkBehaviour
             //NetworkServer.Destroy(gameObject);
             return;
         }
-        var enemy = collision.collider.gameObject.GetComponent<EnemyBase>();
+        var enemy = collision.collider.gameObject.GetComponent<UnitBase>();
         if(enemy != null)
         {
             enemy.HandleHit(Damage);

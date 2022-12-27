@@ -10,21 +10,24 @@ using Unity.Netcode;
 public class ScorePanel : MonoBehaviour
 {
     private PyrrhicGame gameInfo;
-    public TextMeshProUGUI BootTeamInfo;
+    public TextMeshProUGUI BootTeamInfoText;
+    public TextMeshProUGUI StratTeamInfoText;
+    public TextMeshProUGUI BootLivesText;
+    public TextMeshProUGUI StratTicketsText;
 
 
     void Start()
     {
         gameInfo = FindObjectOfType<PyrrhicGame>();
-        gameInfo.BootTeamInfo.OnValueChanged += (oldValue, newValue) => 
+        gameInfo.BootTeamInfo.OnValueChanged += (oldValue, newValue) =>
         {
             StringBuilder sb = new StringBuilder();
             var x = (TeamInfo)newValue;
-            foreach(var y in x.Teammates)
+            foreach (var y in x.Teammates)
             {
                 sb.AppendLine(y.Name);
             }
-            BootTeamInfo.text = sb.ToString();
+            BootTeamInfoText.text = sb.ToString();
         };
 
     }
@@ -34,13 +37,20 @@ public class ScorePanel : MonoBehaviour
         gameInfo = FindObjectOfType<PyrrhicGame>();
         var bootTeamInfo = gameInfo.BootTeamInfo.Value;
         StringBuilder sb = new StringBuilder();
-        foreach (var info in bootTeamInfo.Teammates)
+        foreach (var bootTeammate in bootTeamInfo.Teammates)
         {
-            sb.AppendLine(info.Name);
+            sb.AppendLine(bootTeammate.Name);
         }
-        BootTeamInfo.text = sb.ToString();
-
+        BootTeamInfoText.text = sb.ToString();
+        sb.Clear();
         var stratTeamInfo = gameInfo.StrategistTeamInfo.Value;
+        foreach (var stratTeammate in stratTeamInfo.Teammates)
+        {
+            sb.AppendLine(stratTeammate.Name);
+        }
+        StratTeamInfoText.text = sb.ToString();
+        BootLivesText.text = $"{gameInfo.BootTeamLivesRemaining.Value} lives";
+        StratTicketsText.text = $"{gameInfo.StrategistTickets.Value} tickets";
 
 
     }

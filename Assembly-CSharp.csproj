@@ -178,6 +178,9 @@
     <Compile Include="Assets\Scripts\Networking\ConnectionManager.cs" />
     <Compile Include="Assets\Scripts\Game\GameMode.cs" />
     <Compile Include="Assets\Scripts\UI\ScorePanel.cs" />
+    <Compile Include="Assets\Scripts\Player\IHittable.cs" />
+    <Compile Include="Assets\Scripts\Debugging\BenchGun.cs" />
+    <Compile Include="Assets\Scripts\Debugging\BenchGunUi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

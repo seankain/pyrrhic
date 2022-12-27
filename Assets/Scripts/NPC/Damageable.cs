@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using System.Collections;
 using UnityEngine;
 
 
@@ -11,18 +8,35 @@ using UnityEngine;
 public class Damageable : UnitCapability
 {
     
-    public float HitPoints = 100f;
+    //public float HitPoints = 100f;
+    
 
-    public void Injure(float damagePoints) { 
-        HitPoints -= damagePoints;
-        if(HitPoints <= 0)
+    //void Start()
+    //{
+        
+    //}
+    public void HandleHit(float damage)
+    {
+        unitBase.HitPoints -= damage;
+        if (unitBase.HitPoints <= 0)
         {
-            Die();
+            StartCoroutine("Die");
         }
     }
-    public void Die() 
+
+    public IEnumerator Die()
     {
-        Debug.Log("An implementation of die is needed here");
+        anim.Play("Die");
+        while (anim.GetCurrentAnimatorStateInfo(0).IsName("Die"))
+        {
+            yield return null;
+        }
+        //if (deathGibPrefab != null)
+        //{
+        //    Instantiate(deathGibPrefab, gameObject.transform.position, Quaternion.identity, null);
+        //}
+        //Destroy(gameObject);
+
     }
 
     protected override void OnStarting()
