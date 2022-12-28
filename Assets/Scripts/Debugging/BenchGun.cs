@@ -56,9 +56,10 @@ public class BenchGun : MonoBehaviour
 
     public void Fire(ProjectileInfo projectileInfo, int steps = 100, float stepResolution = 0.01f)
     {
-        var arc = BallisticArc.Construct(Muzzle, projectileInfo, Time.time, steps, stepResolution: stepResolution);
+        var arc = BallisticArc.Construct(Muzzle, projectileInfo, Time.realtimeSinceStartup, steps, stepResolution: stepResolution);
         lineRenderer.positionCount = steps;
         lineRenderer.SetPositions(arc.Points.Select(x => x.Place).ToArray());
+        FindObjectOfType<HitChecker>().QueuedRounds.Enqueue(arc);
         //FireForwardRay();
     }
 

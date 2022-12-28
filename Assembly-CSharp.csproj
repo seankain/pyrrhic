@@ -122,7 +122,7 @@
     <Compile Include="Assets\ThirdParty\StarterAssets\InputSystem\StarterAssetsInputs.cs" />
     <Compile Include="Assets\ThirdParty\ExplosiveLLC\SuperCharacterController\SuperCharacterController\Core\SuperStateMachine.cs" />
     <Compile Include="Assets\Scripts\UI\PyrrhicUI.cs" />
-    <Compile Include="Assets\EquipSockets.cs" />
+    <Compile Include="Assets\Scripts\EquipSockets.cs" />
     <Compile Include="Assets\Scripts\NPC\NpcBaseDebug.cs" />
     <Compile Include="Assets\Scripts\Player\MouseLook.cs" />
     <Compile Include="Assets\Scripts\Player\Weapons\FPPistol.cs" />
@@ -135,7 +135,7 @@
     <Compile Include="Assets\Scripts\UI\RTSHud.cs" />
     <Compile Include="Assets\ThirdParty\StarterAssets\Mobile\Scripts\Utilities\MobileDisableAutoSwitchControls.cs" />
     <Compile Include="Assets\Scripts\NPC\Weapons\BallisticArc.cs" />
-    <Compile Include="Assets\CpuTeamPlayer.cs" />
+    <Compile Include="Assets\Scripts\CpuTeamPlayer.cs" />
     <Compile Include="Assets\Scripts\Player\OfflineFlycam.cs" />
     <Compile Include="Assets\Scripts\Player\DrawSelectDebug.cs" />
     <Compile Include="Assets\Scripts\Player\RTS\RTSDebug.cs" />
@@ -181,7 +181,10 @@
     <Compile Include="Assets\Scripts\Player\IHittable.cs" />
     <Compile Include="Assets\Scripts\Debugging\BenchGun.cs" />
     <Compile Include="Assets\Scripts\Debugging\BenchGunUi.cs" />
-    <Compile Include="Assets\BenchGunCameraController.cs" />
+    <Compile Include="Assets\Scripts\Debugging\BenchGunCameraController.cs" />
+    <Compile Include="Assets\Scripts\Debugging\HitChecker.cs" />
+    <Compile Include="Assets\Scripts\Player\Weapons\PyrProjectileOffline.cs" />
+    <Compile Include="Assets\Scripts\Debugging\DummyTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
