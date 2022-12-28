@@ -13,6 +13,8 @@ public class BenchGunUi : MonoBehaviour
     public TMP_InputField MuzzleVelocityInput;
     public TMP_InputField ProjectileRadiusInput;
     public TMP_InputField BallisticCoefficientInput;
+    public TMP_InputField StepCountInput;
+    public TMP_InputField StepResolutionInput;
     public TMP_Dropdown ProjectileTypeDropdown;
 
     public Button FireButton;
@@ -40,7 +42,7 @@ public class BenchGunUi : MonoBehaviour
                 MassGrams = float.Parse(ProjectileMassInput.text),
                 MuzzleVelocity = float.Parse(MuzzleVelocityInput.text),
                 RadiusMillimeters = float.Parse(ProjectileRadiusInput.text)
-            });
+            }, int.Parse(StepCountInput.text), float.Parse(StepResolutionInput.text));
         });
         UpdateAmmunitionInputs(ProjectileTypeDropdown.options[0].text);
     }

@@ -54,10 +54,17 @@ public class BenchGun : MonoBehaviour
 
     private float turretAngle = 90;
 
-    public void Fire(ProjectileInfo projectileInfo) 
+    public void Fire(ProjectileInfo projectileInfo, int steps = 100, float stepResolution = 0.01f)
     {
-         var arc = BallisticArc.Construct(Muzzle, projectileInfo, Time.time, 100);
+        var arc = BallisticArc.Construct(Muzzle, projectileInfo, Time.time, steps, stepResolution: stepResolution);
+        lineRenderer.positionCount = steps;
         lineRenderer.SetPositions(arc.Points.Select(x => x.Place).ToArray());
+        //FireForwardRay();
+    }
+
+    private void FireForwardRay()
+    {
+        lineRenderer.SetPositions(new Vector3[] { Muzzle.position, Muzzle.forward * 1000 });
     }
 
     // Start is called before the first frame update

@@ -181,6 +181,7 @@
     <Compile Include="Assets\Scripts\Player\IHittable.cs" />
     <Compile Include="Assets\Scripts\Debugging\BenchGun.cs" />
     <Compile Include="Assets\Scripts\Debugging\BenchGunUi.cs" />
+    <Compile Include="Assets\BenchGunCameraController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
