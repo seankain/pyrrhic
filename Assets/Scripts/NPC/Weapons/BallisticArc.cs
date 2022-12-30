@@ -10,50 +10,80 @@ using UnityEngine;
  doesnt work come back to this
 */
 
-public struct BallisticArcPoint
+public class BallisticArcPoint
 {
     public float Time;
     public Vector3 Place;
+    public Vector3 Velocity;
+    //Not going to deal with wind and such, this is going to be 1D
+    public float AngleDelta;
+    public float TimeDelta;
 }
 
-public struct ProjectileInfo
+public class ProjectileInfo
 {
     public float MassGrams;
     public float RadiusMillimeters;
     public float BallisticCoefficientG1;
     public float MuzzleVelocity;
 }
-public struct BallisticArc
+public class BallisticArc
 {
     public List<BallisticArcPoint> Points;
+    public ProjectileInfo ProjectileInfo;
 
-    public static BallisticArc Construct(Transform startingTransform, ProjectileInfo projectile, float startTime, int steps, float stepResolution = 0.001f)
+    public BallisticArc(Transform startingTransform, ProjectileInfo projectile, float startTime, int steps, float stepResolution = 0.001f)
     {
-        var points = new List<BallisticArcPoint>();
+        this.Points = new List<BallisticArcPoint>();
+        this.ProjectileInfo = projectile;
         var prevPosition = startingTransform.position;
         var prevVelocity = startingTransform.forward * projectile.MuzzleVelocity;
-        for(var i = 0; i < steps; i++)
+        for (var i = 0; i < steps; i++)
         {
             //TODO change bullet data to projectile struct
             IntegrationMethods.Heuns(stepResolution, prevPosition, prevVelocity, Vector3.zero,
-                new BulletData 
-                { 
-                muzzleVelocity = projectile.MuzzleVelocity,
-                m = projectile.MassGrams / 1000,
-                C_d = projectile.BallisticCoefficientG1,
-                r = projectile.RadiusMillimeters / 1000,
-                rho = 1.204f
-                }, out var nextPosition, out var nextVelocity);
+                new BulletData
+                {
+                    muzzleVelocity = projectile.MuzzleVelocity,
+                    m = projectile.MassGrams / 1000,
+                    C_d = projectile.BallisticCoefficientG1,
+                    r = projectile.RadiusMillimeters / 1000,
+                    rho = 1.204f
+                }, out var nextPosition, out var nextVelocity, out var angleDelta);
             prevPosition = nextPosition;
             prevVelocity = nextVelocity;
-            points.Add(new BallisticArcPoint { Place = nextPosition, Time = startTime + stepResolution * i });
+            this.Points.Add(new BallisticArcPoint { Place = nextPosition, Time = startTime + stepResolution * i });
         }
-        return new BallisticArc { Points = points };
     }
 
+    public BallisticArc(Transform startingTransform, ProjectileInfo projectile, float startTime, float distance, float stepResolution = 0.001f)
+    {
+        this.Points = new List<BallisticArcPoint>();
+        this.ProjectileInfo = projectile;
+        var prevPosition = startingTransform.position;
+        var prevVelocity = startingTransform.forward * projectile.MuzzleVelocity;
+        var iteration = 0;
+        while (Vector3.Distance(startingTransform.position, prevPosition) <= distance && prevVelocity != Vector3.zero)
+        {
+            //TODO change bullet data to projectile struct
+            IntegrationMethods.Heuns(stepResolution, prevPosition, prevVelocity, Vector3.zero,
+                new BulletData
+                {
+                    muzzleVelocity = projectile.MuzzleVelocity,
+                    m = projectile.MassGrams / 1000,
+                    C_d = projectile.BallisticCoefficientG1,
+                    r = projectile.RadiusMillimeters / 1000,
+                    rho = 1.204f
+                }, out var nextPosition, out var nextVelocity, out var angleDelta);
+            prevPosition = nextPosition;
+            prevVelocity = nextVelocity;
+            this.Points.Add(new BallisticArcPoint { Place = nextPosition, Time = startTime + stepResolution * iteration, AngleDelta =angleDelta });
+            iteration++;
+        }
+    }
 }
 
-public static class BallisticsMethods 
+public static class BallisticsMethods
 {
 
     /// <summary>
@@ -64,9 +94,9 @@ public static class BallisticsMethods
     /// <param name="crossSectionalArea">Defaults to cross sectional area of .308 (7.8mm)</param>
     /// <param name="massDensity">Defaults to the mass density of air at sea level</param>
     /// <returns></returns>
-    public static float DragForce(float dragCoefficient=0.295f,float airDensity=1.204f,float crossSectionalArea = 47.78f,float massDensity=1.2f)
+    public static float DragForce(float dragCoefficient = 0.295f, float airDensity = 1.204f, float crossSectionalArea = 47.78f, float massDensity = 1.2f)
     {
-        return -0.5f*(massDensity*dragCoefficient*airDensity*crossSectionalArea);
+        return -0.5f * (massDensity * dragCoefficient * airDensity * crossSectionalArea);
     }
 }
 
@@ -119,7 +149,7 @@ public static class IntegrationMethods
     //Integration method 3
     //upVec is a vector perpendicular (in the upwards direction) to the direction the bullet is travelling in
     //is only needed if we calculate the lift force
-    public static void Heuns(float timeStep, Vector3 currentPos, Vector3 currentVel, Vector3 upVec, BulletData bulletData, out Vector3 newPos, out Vector3 newVel)
+    public static void Heuns(float timeStep, Vector3 currentPos, Vector3 currentVel, Vector3 upVec, BulletData bulletData, out Vector3 newPos, out Vector3 newVel, out float angleDelta)
     {
         //Add all factors that affects the acceleration
         //Gravity
@@ -155,8 +185,57 @@ public static class IntegrationMethods
         newVel = currentVel + timeStep * 0.5f * (accFactorEuler + accFactorHeuns);
 
         newPos = currentPos + timeStep * 0.5f * (currentVel + newVelEuler);
+        angleDelta = Vector3.Angle(currentPos, newPos);
     }
 
+
+    //Integration method 3
+    //upVec is a vector perpendicular (in the upwards direction) to the direction the bullet is travelling in
+    //is only needed if we calculate the lift force
+    public static void Heuns(float timeStep, Vector3 currentPos, Vector3 currentVel, Vector3 upVec, BulletData bulletData, out BallisticArcPoint nextPoint)
+    {
+        //Add all factors that affects the acceleration
+        //Gravity
+        Vector3 accFactorEuler = gravityVec;
+        //Drag
+        accFactorEuler += BulletPhysics.CalculateBulletDragAcc(currentVel, bulletData);
+        //Lift 
+        accFactorEuler += BulletPhysics.CalculateBulletLiftAcc(currentVel, bulletData, upVec);
+
+
+        //Calculate the new velocity and position
+        //y_k+1 = y_k + timeStep * 0.5 * (f(t_k, y_k) + f(t_k+1, y_k+1))
+        //Where f(t_k+1, y_k+1) is calculated with Forward Euler: y_k+1 = y_k + timeStep * f(t_k, y_k)
+
+        //Step 1. Find new pos and new vel with Forward Euler
+        Vector3 newVelEuler = currentVel + timeStep * accFactorEuler;
+
+        //New position with Forward Euler (is not needed here)
+        //Vector3 newPosEuler = currentPos + timeStep * currentVel;
+
+
+        //Step 2. Heuns method's final step
+        //If we take drag into account, then acceleration is not constant - it also depends on the velocity
+        //So we have to calculate another acceleration factor
+        //Gravity
+        Vector3 accFactorHeuns = gravityVec;
+        //Drag
+        //This assumes that windspeed is constant between the steps, which it should be because wind doesnt change that often
+        accFactorHeuns += BulletPhysics.CalculateBulletDragAcc(newVelEuler, bulletData);
+        //Lift 
+        accFactorHeuns += BulletPhysics.CalculateBulletLiftAcc(newVelEuler, bulletData, upVec);
+        var nextVel = currentVel + timeStep * 0.5f * (accFactorEuler + accFactorHeuns);
+
+        var nextPos = currentPos + timeStep * 0.5f * (currentVel + newVelEuler);
+        nextPoint = new BallisticArcPoint
+        {
+            Place = nextPos,
+            Velocity = nextVel,
+            AngleDelta = Vector3.Angle(currentPos, nextPos),
+            Time = timeStep
+    };
+
+    }
 
 
     //Integration method 3.1

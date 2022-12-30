@@ -22,7 +22,10 @@ public class HitChecker : MonoBehaviour
     {
         if(QueuedRounds.TryDequeue(out var arc))
         {
-            StartCoroutine(RunHitCheckCoroutine(arc));
+            var projectile = Instantiate(ProjectileBasePrefab, arc.Points[0].Place, Quaternion.identity, null);
+            var pyrProjectile = projectile.GetComponent<PyrProjectileOffline>();
+            pyrProjectile.Info = arc.ProjectileInfo;
+            pyrProjectile.Send();
         }
     }
 
@@ -40,6 +43,7 @@ public class HitChecker : MonoBehaviour
             {
                 if (Within(c.Time, Time.realtimeSinceStartup,CheckMaxDistance))
                 {
+                    //Physics.Raycast(c.Place,Vector3.AngleBetween(c.place,))
                     projectile.transform.SetPositionAndRotation(c.Place, Quaternion.identity);
                     if(pyrProjectile.CurrentContacts.Count > 0)
                     {

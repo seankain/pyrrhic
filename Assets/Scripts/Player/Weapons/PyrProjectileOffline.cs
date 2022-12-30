@@ -5,58 +5,86 @@ using Unity.Netcode;
 
 public class PyrProjectileOffline : MonoBehaviour
 {
+    public ProjectileInfo Info;
     public float Damage = 30f;
     private Rigidbody rb;
     public ulong ownerId;
-    public float SpeedMetersPerSecond = 300;
+    private Vector3 currentVelocity;
     public List<GameObject> CurrentContacts { get { return currentContacts; } }
     private List<GameObject> currentContacts = new List<GameObject>();
     [SerializeField]
-    public float MassGrams = 0.1f;
-    [SerializeField]
-    public Vector3 Direction = Vector3.forward;
-    [SerializeField]
-    private float forceMultiplier = 10000;
-    [SerializeField]
     private float maxLifetimeSeconds = 30;
-    private float elapsed = 0;
+    //private float elapsed = 0;
 
     private void Awake()
     {
-        rb = gameObject.GetComponent<Rigidbody>();
+        //rb = gameObject.GetComponent<Rigidbody>();
+
     }
     // Start is called before the first frame update
     void Start()
     {
-
     }
 
     public void Send()
     {
         //rb.AddForce(Direction * (MassGrams * (SpeedMetersPerSecond*SpeedMetersPerSecond)), ForceMode.Impulse);
-        rb.AddForce(Direction * SpeedMetersPerSecond, ForceMode.VelocityChange);
+        //rb.AddForce(Direction * SpeedMetersPerSecond, ForceMode.VelocityChange);
+        StartCoroutine(FlightCoroutine());
     }
 
     // Update is called once per frame
     void Update()
     {
-        elapsed += Time.deltaTime;
-        if (elapsed >= maxLifetimeSeconds)
-        {
-            //TODO look into projectile pooling
-            Destroy(gameObject);
-            //NetworkServer.Destroy(gameObject);
-        }
+        //elapsed += Time.deltaTime;
+        //if (elapsed >= maxLifetimeSeconds)
+        //{
+        //    //TODO look into projectile pooling
+        //    Destroy(gameObject);
+        //    //NetworkServer.Destroy(gameObject);
+        //}
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private IEnumerator FlightCoroutine()
     {
-        Debug.Log($"Whacked {collision.collider.gameObject.name}");
-        currentContacts.Add(collision.contacts[0].otherCollider.gameObject);
-        var hittable = collision.collider.gameObject.GetComponent<IHittable>();
-        if (hittable != null)
+        var elapsed = 0f;
+        currentVelocity = transform.forward * Info.MuzzleVelocity;
+        while (elapsed < maxLifetimeSeconds)
         {
-            Debug.Log("Hit a hittable");
+            elapsed += Time.deltaTime;
+            IntegrationMethods.Heuns(elapsed, transform.position, currentVelocity, Vector3.zero,
+                new BulletData
+                {
+                    muzzleVelocity = Info.MuzzleVelocity,
+                    m = Info.MassGrams / 1000,
+                    C_d = Info.BallisticCoefficientG1,
+                    r = Info.RadiusMillimeters / 1000,
+                    rho = 1.204f
+                },
+                out var nextPosition,
+                out var nextVelocity,
+                out var angleDelta);
+            currentVelocity = nextVelocity;
+            if(Physics.Raycast(transform.position, transform.forward, out var hit, Vector3.Distance(transform.position, nextPosition), ~0, QueryTriggerInteraction.Ignore))
+            {
+
+                Debug.Log($"hit {hit.collider.name} after {elapsed} seconds");
+                yield break;
+            }
+            transform.position = nextPosition;
+            yield return null;
         }
+
     }
+
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    Debug.Log($"Whacked {collision.collider.gameObject.name}");
+    //    currentContacts.Add(collision.contacts[0].otherCollider.gameObject);
+    //    var hittable = collision.collider.gameObject.GetComponent<IHittable>();
+    //    if (hittable != null)
+    //    {
+    //        Debug.Log("Hit a hittable");
+    //    }
+    //}
 }
