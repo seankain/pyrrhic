@@ -7,14 +7,7 @@ using UnityEngine;
 
 public class Damageable : UnitCapability
 {
-    
-    //public float HitPoints = 100f;
-    
 
-    //void Start()
-    //{
-        
-    //}
     public void HandleHit(float damage)
     {
         unitBase.HitPoints -= damage;

@@ -64,7 +64,7 @@ public class PyrProjectile : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log($"Whacked {collision.collider.gameObject.name}");
-        var hittable =collision.collider.gameObject.GetComponent<IHittable>();
+        var hittable =collision.collider.gameObject.GetComponent<INetworkHittable>();
         if(hittable != null)
         {
             hittable.HandleHitClientRpc();

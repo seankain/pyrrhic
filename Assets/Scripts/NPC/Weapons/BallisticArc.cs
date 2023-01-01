@@ -333,7 +333,7 @@ public static class BulletPhysics
 /// <summary>
 /// from https://github.com/Habrador/Unity-Ballistics-Tutorial credit Erik Nordeus
 /// </summary>
-public class BulletData : MonoBehaviour
+public class BulletData
 {
     //Data belonging to this bullet type
     //The initial speed [m/s]
