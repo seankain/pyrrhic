@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class FPPistol : MonoBehaviour
@@ -101,12 +102,12 @@ public class FPPistol : MonoBehaviour
 
     private void SpawnProjectile()
     {
-        //TODO make this a setting or figure it out so that projectile prefabs are always stabby end out
+        //TODO the prefab I'm using for testing is rotated and needs to be set to match forward
         var pref = Instantiate(ProjectilePrefab,muzzleFlashPoint.transform.position,Quaternion.Euler(90,0,0),null);
         var projectile = pref.GetComponent<PyrProjectile>();
-        
+        pref.GetComponent<NetworkObject>().Spawn(true);
         //TODO get owner id if that is important
-        projectile.ownerId = owner.netId;
+        projectile.ownerId = owner.OwnerClientId;
         projectile.Damage = Damage;
         projectile.Direction = muzzleFlashPoint.transform.forward;
         projectile.Send();

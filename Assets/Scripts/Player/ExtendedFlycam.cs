@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Mirror;
+using Unity.Netcode;
 
 public class ExtendedFlycam : NetworkBehaviour
 {
@@ -38,7 +38,7 @@ public class ExtendedFlycam : NetworkBehaviour
 
     void Update()
     {
-        if (!isLocalPlayer) { return; }
+        if (!IsLocalPlayer) { return; }
         rotationX += Input.GetAxis("Mouse X") * cameraSensitivity * Time.deltaTime;
         rotationY += Input.GetAxis("Mouse Y") * cameraSensitivity * Time.deltaTime;
         rotationY = Mathf.Clamp(rotationY, -90, 90);

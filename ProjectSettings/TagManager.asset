@@ -11,6 +11,8 @@ TagManager:
   - Dummie
   - SecondCamera
   - BulletSpawn
+  - CoverPoint
+  - FirePoint
   layers:
   - Default
   - TransparentFX

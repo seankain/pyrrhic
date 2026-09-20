@@ -1,14 +1,14 @@
-﻿using Mirror;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public struct DiscoveryRequest : NetworkMessage
+public struct DiscoveryRequest /*Is there a netcode equivalent: NetworkMessage*/
 {
    
 }
-public struct DiscoveryResponse : NetworkMessage
+public struct DiscoveryResponse /* Is there a netcode equivalent: NetworkMessage*/
 {
     // you probably want uri so clients know how to connect to the server
     public Uri ServerUri;

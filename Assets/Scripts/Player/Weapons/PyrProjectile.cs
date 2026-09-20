@@ -1,17 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
+using Unity.Netcode;
 
 public class PyrProjectile : NetworkBehaviour
 {
     public float Damage = 30f;
     private Rigidbody rb;
-    public uint ownerId;
+    public ulong ownerId;
+    public float SpeedMetersPerSecond = 300;
     [SerializeField]
-    private float SpeedMetersPerSecond = 300;
-    [SerializeField]
-    private float mass = 0.1f;
+    public float MassGrams = 0.1f;
     [SerializeField]
     public Vector3 Direction = Vector3.forward;
     [SerializeField]
@@ -32,8 +31,8 @@ public class PyrProjectile : NetworkBehaviour
 
     public void Send()
     {
-
-        rb.AddForce(Direction * forceMultiplier, ForceMode.Impulse);
+        //rb.AddForce(Direction * (MassGrams * (SpeedMetersPerSecond*SpeedMetersPerSecond)), ForceMode.Impulse);
+        rb.AddForce(Direction * SpeedMetersPerSecond, ForceMode.VelocityChange);
     }
 
     // Update is called once per frame
@@ -42,27 +41,44 @@ public class PyrProjectile : NetworkBehaviour
         elapsed += Time.deltaTime;
         if (elapsed >= maxLifetimeSeconds)
         {
-            NetworkServer.Destroy(gameObject);
+            //TODO look into projectile pooling
+            Destroy(gameObject);
+            //NetworkServer.Destroy(gameObject);
         }
     }
 
-    [Command]
-    void HandlePlayerHit(PyrrhicPlayer player)
+    [ServerRpc]
+    void HandlePlayerHitServerRpc(ulong ownerClientId)
     {
-        player.HandleHit(player.connectionToClient, Damage);
+        var players = FindObjectsOfType<PyrrhicPlayer>();
+        foreach (var player in players)
+        {
+            //TODO could use a sublist of client ids in clientrpc to avoid sending to everyone and checking ids a bunch
+            if (player.OwnerClientId == ownerClientId)
+            {
+                player.HandleHitClientRpc(ownerClientId, Damage);
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log($"Whacked {collision.collider.gameObject.name}");
+        var hittable =collision.collider.gameObject.GetComponent<INetworkHittable>();
+        if(hittable != null)
+        {
+            hittable.HandleHitClientRpc();
+        }
         var player = collision.collider.gameObject.GetComponent<PyrrhicPlayer>();
         if (player != null)
         {
-            HandlePlayerHit(player);
-            NetworkServer.Destroy(gameObject);
+            HandlePlayerHitServerRpc(player.OwnerClientId);
+            //TODO use a pool or something else
+            Destroy(gameObject);
+            //NetworkServer.Destroy(gameObject);
             return;
         }
-        var enemy = collision.collider.gameObject.GetComponent<EnemyBase>();
+        var enemy = collision.collider.gameObject.GetComponent<UnitBase>();
         if(enemy != null)
         {
             enemy.HandleHit(Damage);

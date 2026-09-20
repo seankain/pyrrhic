@@ -1,16 +1,18 @@
-﻿using Mirror;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class PyrrhicPlayer : NetworkBehaviour
+public class PyrrhicPlayer : NetworkBehaviour, INetworkSerializable
 {
-    [SyncVar]
-    public string Name = "Monkey Nuts";
-    [SyncVar]
-    public PyrrhicTeam Team = PyrrhicTeam.Spectator;
-    [SyncVar]
-    public float Health = 100;
+    [SerializeField]
+    private NetworkVariable<string> Name = new NetworkVariable<string>("Monkey Nuts", NetworkVariableReadPermission.Everyone,NetworkVariableWritePermission.Owner);
+    [SerializeField]
+    private NetworkVariable<PyrrhicTeam> Team = new NetworkVariable<PyrrhicTeam>(PyrrhicTeam.Spectator, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField]
+    private NetworkVariable<float> Health = new NetworkVariable<float>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    public NetworkVariable<bool> IsDead = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private enum PlayerState { Joining, Playing, Spectating }
     private PlayerState PlayerCurrentState = PlayerState.Joining;
     public Camera playerCamera;
@@ -30,11 +32,21 @@ public class PyrrhicPlayer : NetworkBehaviour
 
     }
 
-    public override void OnStartLocalPlayer()
+    public override void OnNetworkSpawn()
     {
-        base.OnStartLocalPlayer();
-        ui.JoinTeamBootButton.onClick.AddListener(() => { Debug.Log("Request To join boot"); SendTeamJoinRequest(PyrrhicTeam.Boot); });
-        ui.JoinTeamStratButton.onClick.AddListener(() => { Debug.Log("Request to join strategist"); SendTeamJoinRequest(PyrrhicTeam.Strategist); });
+        base.OnNetworkSpawn();
+        Team.OnValueChanged += (prev,next) => { Debug.Log($"{gameObject.name} changed team"); };
+        Health.OnValueChanged += (prev, next) => { Debug.Log($"{gameObject.name} took damage down to {next} health"); };
+        Name.OnValueChanged += (prev, next) => { Debug.Log($"{gameObject.name} changed player name from {prev} to {next}"); };
+        //OnStartLocalPlayer();
+
+    }
+
+    public void OnStartLocalPlayer()
+    {
+        //base.OnStartLocalPlayer();
+        ui.JoinTeamBootButton.onClick.AddListener(() => { Debug.Log("Request To join boot"); SendTeamJoinRequestServerRpc(PyrrhicTeam.Boot); });
+        ui.JoinTeamStratButton.onClick.AddListener(() => { Debug.Log("Request to join strategist"); SendTeamJoinRequestServerRpc(PyrrhicTeam.Strategist); });
 
         Debug.Log($"Enabling {playerCamera.name}");
         playerCamera.gameObject.SetActive(true);
@@ -42,16 +54,18 @@ public class PyrrhicPlayer : NetworkBehaviour
         var cams = FindObjectsOfType<Camera>();
         foreach (var cam in cams) { if (cam.name == "MainCamera") { Debug.Log($"Disabling {cam.name}"); cam.enabled = false; } }
         //camera = gameObject.GetComponentInChildren<Camera>(true);
-
+        ui.TeamSelectPanel.SetActive(true);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (!isLocalPlayer && Team == PyrrhicTeam.Boot)
+        if (!IsLocalPlayer && Team.Value == PyrrhicTeam.Boot)
         {
             playerAvatar.SetActive(true);
+            return;
         }
+        OnStartLocalPlayer();
 
 
     }
@@ -60,7 +74,16 @@ public class PyrrhicPlayer : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (!IsLocalPlayer) { return; }
+        
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            ui.ShowScorePanel(true);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            ui.ShowScorePanel(false);
+        }
     }
 
     private void SetCursorState(bool onUi)
@@ -79,8 +102,8 @@ public class PyrrhicPlayer : NetworkBehaviour
 
     }
 
-    [TargetRpc]
-    private void SetTeam(NetworkConnection target, PyrrhicTeam assignedTeam)
+    [ClientRpc]
+    private void SetTeamClientRpc(ulong targetId,PyrrhicTeam assignedTeam)
     {
         Debug.Log($"Client set to {assignedTeam}");
 
@@ -89,18 +112,21 @@ public class PyrrhicPlayer : NetworkBehaviour
         HandleTeamChange(assignedTeam);
     }
 
-    [TargetRpc]
-    public void HandleHit(NetworkConnection target, float damage)
+    [ClientRpc]
+    public void HandleHitClientRpc(ulong clientId,float damage)
     {
-
-        Health -= damage;
-        Debug.Log($"{Name} hit for {damage} damage");
-        if (Health <= 0) { Die(); }
+        if (OwnerClientId == clientId)
+        {
+            Health.Value -= damage;
+            Debug.Log($"{Name} hit for {damage} damage");
+            if (Health.Value <= 0) { Die(); }
+        }
     }
 
     public void Die()
     {
-        Debug.Log($"{Name} died");
+        Debug.Log($"{Name.Value} died");
+        IsDead.Value = true;
     }
 
     private void EnableSpectateMotion() 
@@ -152,26 +178,28 @@ public class PyrrhicPlayer : NetworkBehaviour
 
     }
 
-    [TargetRpc]
-    public void PromptTeamSelect(NetworkConnection target)
+    [ServerRpc]
+    public void PromptTeamSelectServerRpc()
     {
         SetCursorState(true);
         ui.ShowTeamSelect();
     }
 
-    [Command]
-    private void SendTeamJoinRequest(PyrrhicTeam team)
+    [ServerRpc]
+    private void SendTeamJoinRequestServerRpc(PyrrhicTeam team)
     {
         //Default is spectator
         //TODO: handle when player selects full team
         Debug.Log("Server side team join request");
+        var gameInfo = FindObjectOfType<PyrrhicGame>();
         if (team == PyrrhicTeam.Boot)
         {
             if (serverInfo.CurrentBootTeamSize < serverInfo.MaxBootTeamSize)
             {
                 team = PyrrhicTeam.Boot;
                 Debug.Log($"{Name} Joined boot");
-                SetTeam(this.connectionToClient, PyrrhicTeam.Boot);
+                gameInfo.AddPlayerToTeamServerRpc(this.OwnerClientId, Name.Value, PyrrhicTeam.Boot);
+                SetTeamClientRpc(this.OwnerClientId, PyrrhicTeam.Boot);
             }
         }
         else if (team == PyrrhicTeam.Strategist)
@@ -180,12 +208,16 @@ public class PyrrhicPlayer : NetworkBehaviour
             {
                 Debug.Log($" {Name} Joined Strategist");
                 team = PyrrhicTeam.Strategist;
-                SetTeam(this.connectionToClient, PyrrhicTeam.Strategist);
+                gameInfo.AddPlayerToTeamServerRpc(this.OwnerClientId, Name.Value, PyrrhicTeam.Strategist);
+                SetTeamClientRpc(this.OwnerClientId, PyrrhicTeam.Strategist);
             }
 
         }
 
     }
 
-
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        throw new System.NotImplementedException();
+    }
 }

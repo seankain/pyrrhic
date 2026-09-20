@@ -1,6 +1,9 @@
 -fps player death/respawn
 -fps player aiming: add rotation to sighting location to give better iron sight position
 -game lifecycle/ timer
+-game scoring
+-game info ui on tab
+-rts base unit damage and death
 -rts base build
 -rts base select
 -rts base unit spawn orders
@@ -10,3 +13,11 @@
 -rts HUD icons/hotkeys
 -rts command state change
 -rts selected player command
+
+
+
+-ballistic arc with server side hit checking versus collider versus raycast
+
+Fixed update is called every 0.2 seconds
+A .308 muzzle velocity is 2700 feet per second (900 meters per second)
+180 meters per 0.2 seconds

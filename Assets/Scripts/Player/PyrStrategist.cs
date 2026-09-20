@@ -1,7 +1,7 @@
-﻿using Mirror;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class PyrStrategist : NetworkBehaviour
 {
@@ -35,7 +35,8 @@ public class PyrStrategist : NetworkBehaviour
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray,out var hitInfo,100)) 
             {
-                CmdSpawnEntity(hitInfo.point);
+                //CmdSpawnEntity(hitInfo.point);
+                Debug.Log("TODO: spawn entities with unity netcode");
             }
             
         }
@@ -46,13 +47,13 @@ public class PyrStrategist : NetworkBehaviour
         if(Input.GetButtonDown("Fire2")) { }
     }
 
-    [Command]
-    void CmdSpawnEntity(Vector3 position) {
-        var prefab = TeamEntityPrefabs[currentSpawnSlot];
-        var teamEnt = Instantiate(prefab, position, Quaternion.identity, null);
-        activeTeamEntities.Add(teamEnt);
-        NetworkServer.Spawn(teamEnt,this.gameObject);
-    }
+    //[Command]
+    //void CmdSpawnEntity(Vector3 position) {
+    //    var prefab = TeamEntityPrefabs[currentSpawnSlot];
+    //    var teamEnt = Instantiate(prefab, position, Quaternion.identity, null);
+    //    activeTeamEntities.Add(teamEnt);
+    //    NetworkServer.Spawn(teamEnt,this.gameObject);
+    //}
 
 
 }

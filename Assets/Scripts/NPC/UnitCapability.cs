@@ -2,7 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitCapability : MonoBehaviour
+public abstract class UnitCapability : MonoBehaviour
 {
-    public UnitCommands CapabilityCommand;
+    protected Animator anim;
+    protected UnitBase unitBase;
+    void Start()
+    {
+        anim = GetComponent<Animator>();
+        unitBase = GetComponent<UnitBase>();
+        OnStarting();
+    }
+
+    public PyrrhicPlayer[] GetPlayers()
+    {
+        return FindObjectsOfType<PyrrhicPlayer>();
+    }
+
+    protected abstract void OnStarting();
 }
